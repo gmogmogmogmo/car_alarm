@@ -13,10 +13,16 @@
 Adxl345::Adxl345(const char* device){
     fd = open(device, O_RDWR);
     ioctl(fd, I2C_SLAVE, SENSOR_ADDRESS);
+
+    //open a chip by path
+    chip = gpiod_chip_open("/dev/gpiochip0");
+
 }
 
 Adxl345::~Adxl345(){
     close(fd);
+    gpiod_line_request_release(request);
+    gpiod_chip_close(chip);
 }
 
 void Adxl345::wake(){
@@ -126,12 +132,16 @@ void playSound(const std::string& filepath){
     std::string command = "aplay " + filepath + " &";
     system(command.c_str());
 }
+
+// void writeRegister(){
+//     write(fd)
+// }
 int main(int argc, char const *argv[])
 {
-    uint8_t tapThreshold = 0x64; // 100 * 62.5 mg = 6250
-    uint8_t duration = 0x20; //20,000 us / 625 us = 3x 0x20;
-    uint8_t usingIntOnePin = 0x00; //00000000
-    uint8_t tapinterrupt = 0x40;
+    const uint8_t tapThreshold = 0x64; // 100 * 62.5 mg = 6250
+    const uint8_t duration = 0x20; //20,000 us / 625 us = 3x 0x20;
+    const uint8_t usingIntOnePin = 0x00; //00000000
+    const uint8_t tapinterrupt = 0x40;
 
     int timeStep = 100000;
     
@@ -145,20 +155,14 @@ int main(int argc, char const *argv[])
 
     accel.wake();
 
-    std::cout << " Waiting for tap..." << std::endl;
-    while(true){
-        uint8_t source = accel.checkIntSource();
+    std::cout << "chip object: " << chip << std::endl;
 
-        std::cout << "INT_SOURCE: " << std::bitset<8>(source) << std::endl;
+    // struct gpiod_line_info lineInfo;
+    
+    // lineInfo = gpiod_chip_get_line_info(struct gpiod_chip *chip, unsigned int offset);
+    
 
-        if (source & 0x40) {
-            std::cout << "SINGLE TAP DETECTED!" << std::endl;
-            playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
-        }
-
-        usleep(timeStep);
-        
-    }
 
     return 0;
 }
+
