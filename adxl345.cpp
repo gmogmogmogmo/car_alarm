@@ -8,21 +8,18 @@
 #include <bitset>
 #include <linux/i2c-dev.h>
 #include <cstdlib>
-#include <gpiod.h>
+#include <gpiod.hpp>
 
 Adxl345::Adxl345(const char* device){
     fd = open(device, O_RDWR);
     ioctl(fd, I2C_SLAVE, SENSOR_ADDRESS);
 
-    //open a chip by path
-    chip = gpiod_chip_open("/dev/gpiochip0");
-
 }
 
 Adxl345::~Adxl345(){
     close(fd);
-    gpiod_line_request_release(request);
-    gpiod_chip_close(chip);
+    //gpiod_line_request_release(request);
+    //gpiod_chip_close(chip);
 }
 
 void Adxl345::wake(){
@@ -116,53 +113,70 @@ void Adxl345::setIntMap(uint8_t value){
     write(fd, intMapAddr, 2);
 }
 
-void Adxl345::waitForTap(){
-    struct gpiod_edge_event_buffer *buffer = gpiod_edge_event_buffer_new(1);
-
-    int ret = gpiod_line_request_read_edge_events(request, buffer, 1); // blocks until event
-    if (ret <= 0) {
-        gpiod_edge_event_buffer_free(buffer);
-        return;
-    }
-
-    gpiod_edge_event_buffer_free(buffer);
-}
-
 void playSound(const std::string& filepath){
     std::string command = "aplay " + filepath + " &";
     system(command.c_str());
 }
 
-// void writeRegister(){
-//     write(fd)
-// }
+void interruptHandler(int gpio, int level, uint32_t tick){
+    if(level == 1) {
+        printf("INT1 TRIGGERED!", gpio);
+    }
+}
+
 int main(int argc, char const *argv[])
 {
-    const uint8_t tapThreshold = 0x64; // 100 * 62.5 mg = 6250
+    const uint8_t tapThreshold = 0x20; // 100 * 62.5 mg = 6250
     const uint8_t duration = 0x20; //20,000 us / 625 us = 3x 0x20;
     const uint8_t usingIntOnePin = 0x00; //00000000
     const uint8_t tapinterrupt = 0x40;
 
-    int timeStep = 100000;
+    const int xAxisDetectionOn = 1;
+    const int yAxisDetectionOn = 1;
+    const int zAxisDetectionOn = 1;
+    const int gpioPinSeventeen = 17;
+    const int setIndefinitely = -1;
+    const int edgeEventBufferCapacity = 10;
     
     Adxl345 accel("/dev/i2c-1");
 
+    accel.wake();
     accel.setThreshTap(tapThreshold);
     accel.setDur(duration);
-    accel.setTapDetection(1,1,1);
+    accel.setTapDetection(xAxisDetectionOn, yAxisDetectionOn, zAxisDetectionOn);
     accel.setInterruptEnable(tapinterrupt);
     accel.setIntMap(usingIntOnePin);
 
-    accel.wake();
+    //interrupt driven 
+    gpiod::chip myChip("/dev/gpiochip0");
+    gpiod::line_settings settings;
+    settings.set_direction(gpiod::line::direction::INPUT);
+    settings.set_edge_detection(gpiod::line::edge::RISING);
 
-    std::cout << "chip object: " << chip << std::endl;
+    gpiod::line_config configForGPIO;
+    configForGPIO.add_line_settings(gpioPinSeventeen, settings);
 
-    // struct gpiod_line_info lineInfo;
-    
-    // lineInfo = gpiod_chip_get_line_info(struct gpiod_chip *chip, unsigned int offset);
-    
+    //holds the choices for the actual request
+    auto requestBuilder = myChip.prepare_request();
+    requestBuilder.set_consumer("ADXL345");
+    requestBuilder.set_line_config(configForGPIO);
 
+    gpiod::edge_event_buffer eventBuffer(edgeEventBufferCapacity);
 
+    auto request = requestBuilder.do_request();
+
+    while(true){
+        //clear interrupt register
+        accel.checkIntSource();
+        std::cout << "Detecting... " << std::endl;
+        request.wait_edge_events(std::chrono::nanoseconds(setIndefinitely));
+        std::cout << "Movement detected!" << std::endl;
+        auto eventTriggered = request.read_edge_events(eventBuffer); 
+        if(eventTriggered == 1){
+            playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
+        }
+    }
+    system("clear");    
     return 0;
 }
 

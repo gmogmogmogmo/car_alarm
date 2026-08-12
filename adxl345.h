@@ -23,7 +23,7 @@ class Adxl345 {
 
     uint8_t checkIntSource();
     
-    void waitForTap();
+    //void waitForTap();
 
     int16_t readX();
     int16_t readY();
@@ -31,9 +31,6 @@ class Adxl345 {
 
     private:
     int fd;
-    struct gpiod_chip* chip;
-    struct gpiod_line_request* request;
-    static constexpr unsigned int gpioLineOffset = 17;
 };
 
 #endif
