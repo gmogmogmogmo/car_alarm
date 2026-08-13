@@ -12,8 +12,7 @@
 
 Adxl345::Adxl345(const char* device){
     fd = open(device, O_RDWR);
-    ioctl(fd, I2C_SLAVE, SENSOR_ADDRESS);
-
+    ioctl(fd, I2C_SLAVE, sensorAddress);
 }
 
 Adxl345::~Adxl345(){
@@ -85,7 +84,7 @@ void Adxl345::setDur(uint8_t value){
     write(fd, durAddress, 2);
 }
 
-void Adxl345::setTapDetection(int xAxisDetection, int yAxisDetection, int zAxisDetection){
+void Adxl345::setAxes(int xAxisDetection, int yAxisDetection, int zAxisDetection){
     //if value is set to 1 if detection is enabled for an axis 0 if not
     if(xAxisDetection == 1 && yAxisDetection == 1 && zAxisDetection == 1){
         uint8_t tap[2] = {0x2A, 0x07};
@@ -118,36 +117,20 @@ void playSound(const std::string& filepath){
     system(command.c_str());
 }
 
-void interruptHandler(int gpio, int level, uint32_t tick){
-    if(level == 1) {
-        printf("INT1 TRIGGERED!", gpio);
-    }
+void setUpSingleTapDetection(Adxl345& accel){
+    accel.wake();
+    accel.setThreshTap(tapThreshold);
+    accel.setDur(duration);
+    accel.setAxes(xAxisDetectionOn, yAxisDetectionOn, zAxisDetectionOn);
+    accel.setInterruptEnable(tapinterrupt);
+    accel.setIntMap(usingIntOnePin);
 }
 
 int main(int argc, char const *argv[])
 {
-    const uint8_t tapThreshold = 0x20; // 100 * 62.5 mg = 6250
-    const uint8_t duration = 0x20; //20,000 us / 625 us = 3x 0x20;
-    const uint8_t usingIntOnePin = 0x00; //00000000
-    const uint8_t tapinterrupt = 0x40;
-
-    const int xAxisDetectionOn = 1;
-    const int yAxisDetectionOn = 1;
-    const int zAxisDetectionOn = 1;
-    const int gpioPinSeventeen = 17;
-    const int setIndefinitely = -1;
-    const int edgeEventBufferCapacity = 10;
-    
     Adxl345 accel("/dev/i2c-1");
-
-    accel.wake();
-    accel.setThreshTap(tapThreshold);
-    accel.setDur(duration);
-    accel.setTapDetection(xAxisDetectionOn, yAxisDetectionOn, zAxisDetectionOn);
-    accel.setInterruptEnable(tapinterrupt);
-    accel.setIntMap(usingIntOnePin);
-
-    //interrupt driven 
+    setUpSingleTapDetection(accel);
+    
     gpiod::chip myChip("/dev/gpiochip0");
     gpiod::line_settings settings;
     settings.set_direction(gpiod::line::direction::INPUT);
@@ -156,7 +139,6 @@ int main(int argc, char const *argv[])
     gpiod::line_config configForGPIO;
     configForGPIO.add_line_settings(gpioPinSeventeen, settings);
 
-    //holds the choices for the actual request
     auto requestBuilder = myChip.prepare_request();
     requestBuilder.set_consumer("ADXL345");
     requestBuilder.set_line_config(configForGPIO);
@@ -166,17 +148,13 @@ int main(int argc, char const *argv[])
     auto request = requestBuilder.do_request();
 
     while(true){
-        //clear interrupt register
         accel.checkIntSource();
         std::cout << "Detecting... " << std::endl;
         request.wait_edge_events(std::chrono::nanoseconds(setIndefinitely));
         std::cout << "Movement detected!" << std::endl;
-        auto eventTriggered = request.read_edge_events(eventBuffer); 
-        if(eventTriggered == 1){
-            playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
-        }
+        auto eventTriggered = request.read_edge_events(eventBuffer);
+        playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
     }
     system("clear");    
     return 0;
 }
-
