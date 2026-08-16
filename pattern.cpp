@@ -11,17 +11,16 @@ void detecting(LED& ledOne, LED& ledTwo, LED& ledThree){
     ledTwo.configure();
     ledThree.configure();
     int numberOfCycles = 20;
-    for (size_t i = 0; i < numberOfCycles; i++){
+   
         ledOne.on();
         usleep(fiveMiliseconds);
         ledOne.off();
-        ledTwo.on();
-        usleep(fiveMiliseconds);
-        ledTwo.off();
-        ledThree.on();
-        usleep(fiveMiliseconds);
-        ledThree.off();   
-    }
+    ledTwo.on();
+    usleep(fiveMiliseconds);
+    ledTwo.off();
+    ledThree.on();
+    usleep(fiveMiliseconds);
+    ledThree.off();   
     
 }
 

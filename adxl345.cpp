@@ -112,12 +112,12 @@ void Adxl345::setIntMap(uint8_t value){
     write(fd, intMapAddr, 2);
 }
 
-void playSound(const std::string& filepath){
+void Adxl345::playSound(const std::string& filepath){
     std::string command = "aplay " + filepath + " &";
     system(command.c_str());
 }
 
-void setUpSingleTapDetection(Adxl345& accel){
+void Adxl345::setUpSingleTapDetection(Adxl345& accel){
     accel.wake();
     accel.setThreshTap(tapThreshold);
     accel.setDur(duration);
@@ -126,8 +126,7 @@ void setUpSingleTapDetection(Adxl345& accel){
     accel.setIntMap(usingIntOnePin);
 }
 
-int main(int argc, char const *argv[])
-{
+void Adxl345::lineSetupSignalDetection(){
     Adxl345 accel("/dev/i2c-1");
     setUpSingleTapDetection(accel);
     
@@ -146,6 +145,10 @@ int main(int argc, char const *argv[])
     gpiod::edge_event_buffer eventBuffer(edgeEventBufferCapacity);
 
     auto request = requestBuilder.do_request();
+}
+
+int main(int argc, char const *argv[])
+{
 
     while(true){
         accel.checkIntSource();

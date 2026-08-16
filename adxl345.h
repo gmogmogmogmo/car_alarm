@@ -29,6 +29,7 @@ class Adxl345 {
     void setInterruptEnable(uint8_t value);
     void setIntMap(uint8_t value);
     void setUpSingleTapDetection();
+    void lineSetupSignalDetection();
     uint8_t checkIntSource();
     int16_t readX();
     int16_t readY();
@@ -36,6 +37,7 @@ class Adxl345 {
 
     private:
     int fd;
+    gpiod::
 };
 
 #endif

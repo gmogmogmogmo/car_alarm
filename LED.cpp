@@ -8,6 +8,7 @@
 
 LED::LED(int pinNumber){
   pin = pinNumber;
+  configure();
 }
 
 void LED::configure(){
@@ -33,16 +34,10 @@ void LED::on(){
 
 // int main(int argc, char const *argv[])
 // {
-//     int gpioPinTwentySeven = 27;
-//     int gpioPinTwentyTwo = 22;
-//     int gpioPinTwentyThree = 23;
 //     LED ledOne(gpioPinTwentySeven);
 //     LED ledTwo(gpioPinTwentyTwo);
 //     LED ledThree(gpioPinTwentyThree);
-
-//     ledOne.configure();
-//     ledTwo.configure();
-//     ledThree.configure();
+    
 //     std::cout << "LED light has been configured: " << std::endl;
 //     sleep(5);
 //     ledOne.on();

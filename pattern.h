@@ -3,7 +3,7 @@
 
 #include "LED.h"
 
-void detecting(LED& led, LED& ledTwo, LED& ledThree);
+void detecting(LED& led, LED& ledTwo, LED& ledThree, );
 
 // void alarm(LED& led);
 
