@@ -37,7 +37,7 @@ class Adxl345 {
 
     private:
     int fd;
-    gpiod::
+    std::unique_ptr<gpiod::line_request> request;
 };
 
 #endif

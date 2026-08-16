@@ -144,20 +144,5 @@ void Adxl345::lineSetupSignalDetection(){
 
     gpiod::edge_event_buffer eventBuffer(edgeEventBufferCapacity);
 
-    auto request = requestBuilder.do_request();
-}
-
-int main(int argc, char const *argv[])
-{
-
-    while(true){
-        accel.checkIntSource();
-        std::cout << "Detecting... " << std::endl;
-        request.wait_edge_events(std::chrono::nanoseconds(setIndefinitely));
-        std::cout << "Movement detected!" << std::endl;
-        auto eventTriggered = request.read_edge_events(eventBuffer);
-        playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
-    }
-    system("clear");    
-    return 0;
+    request = std::make_unique<gpiod::line_request>(.do_request());
 }
