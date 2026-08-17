@@ -2,7 +2,9 @@
 #ifndef accel_H
 #define accel_H
 #include <cstdint>
-#include <gpiod.h>
+#include <gpiod.hpp>
+#include <memory>
+#include <string>
 
 constexpr uint8_t sensorAddress = 0x53;
 constexpr uint8_t tapThreshold = 0x20;
@@ -14,7 +16,6 @@ constexpr int xAxisDetectionOn = 1;
 constexpr int yAxisDetectionOn = 1;
 constexpr int zAxisDetectionOn = 1;
 constexpr int gpioPinSeventeen = 17;
-constexpr int setIndefinitely = -1;
 constexpr int edgeEventBufferCapacity = 10;
 
 class Adxl345 {
@@ -30,6 +31,8 @@ class Adxl345 {
     void setIntMap(uint8_t value);
     void setUpSingleTapDetection();
     void lineSetupSignalDetection();
+    void playSound(const std::string& filepath);
+    bool tapDetected();
     uint8_t checkIntSource();
     int16_t readX();
     int16_t readY();
@@ -38,6 +41,7 @@ class Adxl345 {
     private:
     int fd;
     std::unique_ptr<gpiod::line_request> request;
+    
 };
 
 #endif

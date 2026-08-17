@@ -2,12 +2,11 @@
 #define PATTERNS_H
 
 #include "LED.h"
+#include "adxl345.h"
 
-void systemArmed(LED& led, LED& ledTwo, LED& ledThree);
-void systemDisarmed(LED& led, LED& ledtwo, LED& ledThree);
+void systemArmed(LED& led, LED& ledTwo, LED& ledThree, Adxl345& accelerometer);
+void alarm(LED& led, LED& ledtwo, LED& ledThree);
 void systemOffline(LED& led, LED& ledTwo, LED& ledThree);
-
-// void alarm(LED& led);
 
 //more
 #endif

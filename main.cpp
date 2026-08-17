@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 #include "adxl345.h"
 #include "LED.h"
 #include "pattern.h"
@@ -9,22 +10,20 @@ int main(int argc, char const *argv[])
     LED ledOne(gpioPinTwentySeven);
     LED ledTwo(gpioPinTwentyTwo);
     LED ledThree(gpioPinTwentyThree);
+    std::cout << "LED objects have been made." << std::endl;
 
-    Adxl345 accel("/dev/i2c-1");
-    accel.setUpSingleTapDetection(accel);
-    accel.watchForLine();
+    Adxl345 accelerometer("/dev/i2c-1");
+    std::cout << "Adxl345 object has been made. " << std::endl;
+   
+    accelerometer.checkIntSource();
+    std::cout << "Detecting... " << std::endl;
+    systemArmed(ledOne, ledTwo, ledThree, accelerometer);
+    std::cout << "Movement detected!" << std::endl;
+    alarm(ledOne, ledTwo, ledThree);
+    accelerometer.playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
+
+    systemOffline(ledOne, ledTwo, ledThree);
         
-    while(true){
-        accel.checkIntSource();
-        std::cout << "Detecting... " << std::endl;
-        armed(ledOne, ledTwo, ledThree, *request);
-    
-        std::cout << "Movement detected!" << std::endl;
-        request->read_edge_events(eventBuffer);
-        alarm(ledOne, ledTwo, ledThree);
-        accel.playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
-    }
-
     return 0;
 }
 

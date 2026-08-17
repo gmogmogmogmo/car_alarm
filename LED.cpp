@@ -32,26 +32,4 @@ void LED::on(){
     request->set_value(pin, gpiod::line::value::ACTIVE);
 }
 
-// int main(int argc, char const *argv[])
-// {
-//     LED ledOne(gpioPinTwentySeven);
-//     LED ledTwo(gpioPinTwentyTwo);
-//     LED ledThree(gpioPinTwentyThree);
-    
-//     std::cout << "LED light has been configured: " << std::endl;
-//     sleep(5);
-//     ledOne.on();
-//     ledTwo.on();
-//     ledThree.on();
-//     std::cout << "LED light should be on" << std::endl;
-//     sleep(5);
-//     ledOne.off();
-//     ledTwo.off();
-//     ledThree.off();
-//     std::cout << "LED light should be off" << std::endl;
-//     return 0;
-// }
-
-
-
 // g++ LED.cpp -o LED $(pkg-config --cflags --libs libgpiodcxx)

@@ -13,6 +13,8 @@
 Adxl345::Adxl345(const char* device){
     fd = open(device, O_RDWR);
     ioctl(fd, I2C_SLAVE, sensorAddress);
+    setUpSingleTapDetection();
+    lineSetupSignalDetection();
 }
 
 Adxl345::~Adxl345(){
@@ -117,19 +119,16 @@ void Adxl345::playSound(const std::string& filepath){
     system(command.c_str());
 }
 
-void Adxl345::setUpSingleTapDetection(Adxl345& accel){
-    accel.wake();
-    accel.setThreshTap(tapThreshold);
-    accel.setDur(duration);
-    accel.setAxes(xAxisDetectionOn, yAxisDetectionOn, zAxisDetectionOn);
-    accel.setInterruptEnable(tapinterrupt);
-    accel.setIntMap(usingIntOnePin);
+void Adxl345::setUpSingleTapDetection(){
+    wake();
+    setThreshTap(tapThreshold);
+    setDur(duration);
+    setAxes(xAxisDetectionOn, yAxisDetectionOn, zAxisDetectionOn);
+    setInterruptEnable(tapinterrupt);
+    setIntMap(usingIntOnePin);
 }
 
 void Adxl345::lineSetupSignalDetection(){
-    Adxl345 accel("/dev/i2c-1");
-    setUpSingleTapDetection(accel);
-    
     gpiod::chip myChip("/dev/gpiochip0");
     gpiod::line_settings settings;
     settings.set_direction(gpiod::line::direction::INPUT);
@@ -144,5 +143,9 @@ void Adxl345::lineSetupSignalDetection(){
 
     gpiod::edge_event_buffer eventBuffer(edgeEventBufferCapacity);
 
-    request = std::make_unique<gpiod::line_request>(.do_request());
+    request = std::make_unique<gpiod::line_request>(requestBuilder.do_request());
+}
+
+bool Adxl345::tapDetected(){
+    return request->wait_edge_events(std::chrono::nanoseconds(0));
 }
