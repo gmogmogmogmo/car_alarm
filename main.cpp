@@ -19,8 +19,8 @@ int main(int argc, char const *argv[])
     std::cout << "Detecting... " << std::endl;
     systemArmed(ledOne, ledTwo, ledThree, accelerometer);
     std::cout << "Movement detected!" << std::endl;
-    alarm(ledOne, ledTwo, ledThree);
-    accelerometer.playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
+    //alarm(ledOne, ledTwo, ledThree);
+    //accelerometer.playSound("/home/gmo/sounds/Alarm_Sound_Effect.wav");
 
     systemOffline(ledOne, ledTwo, ledThree);
         
