@@ -6,8 +6,10 @@ class Sim
 {
 private:
     int fd;
+    void configre 
 public:
-    Sim(/* args */);
+    Sim(const char* device);
+    void readData();
     //~Sim();
 };
 
