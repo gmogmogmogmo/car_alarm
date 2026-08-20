@@ -2,14 +2,17 @@
 #define SIM_H
 
 
+constexpr int timeForListening = 2;
+
+
 class Sim
 {
 private:
     int fd;
-    void configre 
 public:
     Sim(const char* device);
     void readData();
+    // void printData(;)
     //~Sim();
 };
 

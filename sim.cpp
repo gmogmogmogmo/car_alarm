@@ -16,34 +16,39 @@ Sim::Sim(const char* device){
 
 void Sim::readData(){
     char buffer[256];
+    int bytesRead;
     std::cout << "About to read... " << std::endl;
-    int bytesRead = read(fd, buffer, 256);
+
+    auto start = std::chrono::steady_clock::now();
+    while (std::chrono::steady_clock::now() - start < std::chrono::seconds(2))
+    {
+        bytesRead = read(fd, buffer, 256);
+    }
     std::cout.write(buffer, bytesRead); 
-  
-    // if(bytesRead > 0){
-    //     std::string data(buffer, bytesRead);
-    //     size_t position = data.find("$GNGGA");
-    //     std::cout << "Number of bytes: " << bytesRead << std::endl;
-    //     std::cout.write(buffer, bytesRead);   
-    // }
-    // else {
-    //     std::cout << "Received no data. " << std::endl;
-    // }
+
 }
+
+// void Sim::printData(){
+//     // if(bytesRead > 0){
+//     //     std::string data(buffer, bytesRead);
+//     //     size_t position = data.find("$GNGGA");
+//     //     std::cout << "Number of bytes: " << bytesRead << std::endl;
+//     //     std::cout.write(buffer, bytesRead);   
+//     // }
+//     // else {
+//     //     std::cout << "Received no data. " << std::endl;
+//     // }
+
+//     
+
+// }
 
 
 int main(int argc, char const *argv[])
 {   
     Sim gps("/dev/ttyUSB2");
-
-    auto start = std::chrono::steady_clock::now();
-    
-    //batch of 2 second data from stream 
-    while (std::chrono::steady_clock::now() - start < std::chrono::seconds(2))
-    {
-        gps.readData();
-    }
-
+ 
+    gps.readData();
 
     return 0;
 }
