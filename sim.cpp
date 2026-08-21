@@ -3,7 +3,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string>
-#include <chrono>
 
 Sim::Sim(const char* device){
     fd = open(device, O_RDWR);
@@ -15,33 +14,28 @@ Sim::Sim(const char* device){
 }
 
 void Sim::readData(){
-    char buffer[256];
-    int bytesRead;
-    std::cout << "About to read... " << std::endl;
+    bool foundGNGGA = false;
+    char temp[256];
+    std::string data;
+    int bytesRead = 0;
+    std::size_t end;
+    std::size_t start;
+    std::cout << "reading... " << std::endl;
 
-    auto start = std::chrono::steady_clock::now();
-    while (std::chrono::steady_clock::now() - start < std::chrono::seconds(2))
-    {
-        bytesRead = read(fd, buffer, 256);
+    while(!(foundGNGGA)){
+        bytesRead = read(fd, temp, 256);
+        data.append(temp, bytesRead);
+        if(data.find("$GNGGA") != std::string::npos){
+            start = data.find("$GNGGA");
+            end = data.find("\n", start);
+            foundGNGGA = true;
+            break;
+        }
     }
-    std::cout.write(buffer, bytesRead); 
+    std::cout.write(data.data() + start, end - start); 
+    std::cout << std::endl;
 
 }
-
-// void Sim::printData(){
-//     // if(bytesRead > 0){
-//     //     std::string data(buffer, bytesRead);
-//     //     size_t position = data.find("$GNGGA");
-//     //     std::cout << "Number of bytes: " << bytesRead << std::endl;
-//     //     std::cout.write(buffer, bytesRead);   
-//     // }
-//     // else {
-//     //     std::cout << "Received no data. " << std::endl;
-//     // }
-
-//     
-
-// }
 
 
 int main(int argc, char const *argv[])
@@ -61,3 +55,9 @@ int main(int argc, char const *argv[])
 // create algorithm that collects one specific sentence that has the postion run program everytime the alarm goes off 
 
 //create a separate function that gives 
+
+
+//buffer.end()
+
+
+// H E L L 0 _ (<- .end() is _)

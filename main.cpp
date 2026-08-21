@@ -3,7 +3,8 @@
 #include "adxl345.h"
 #include "LED.h"
 #include "pattern.h"
-#include "button.h"
+// #include "button.h"
+#include "sim.h"
 
 
 int main(int argc, char const *argv[])
@@ -12,9 +13,10 @@ int main(int argc, char const *argv[])
     LED ledTwo(gpioPinTwentyTwo);
     LED ledThree(gpioPinTwentyThree);
 
-    Button setLED();
+    //Button setLED();
 
     Adxl345 accelerometer("/dev/i2c-1");
+    Sim gps("/dev/ttyUSB2");
    
     accelerometer.checkIntSource();
     std::cout << "Detecting... " << std::endl;

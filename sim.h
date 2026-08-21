@@ -2,7 +2,7 @@
 #define SIM_H
 
 
-constexpr int timeForListening = 2;
+constexpr int timeReading = 2;
 
 
 class Sim
