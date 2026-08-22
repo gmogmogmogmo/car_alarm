@@ -33,13 +33,4 @@ void Button::hasButtonPressed(){
         std::cout << "Button not pressed." << std::endl;
     }
 }
-int main(int argc, char const *argv[])
-{
-    int gpioPinTwentySix = 26;
 
-    Button buttonOne(gpioPinTwentySix);
-
-    buttonOne.hasButtonPressed();
-
-    return 0;
-}

@@ -115,7 +115,9 @@ void Adxl345::setIntMap(uint8_t value){
 }
 
 void Adxl345::playSound(const std::string& filepath){
-    std::string command = "aplay " + filepath + " &";
+    std::cout << "Playing: " << filepath << std::endl;
+
+    std::string command = "aplay \"" + filepath + "\" >/dev/null 2>&1 &";
     system(command.c_str());
 }
 

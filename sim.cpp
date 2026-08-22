@@ -20,7 +20,7 @@ void Sim::readData(){
     int bytesRead = 0;
     std::size_t end;
     std::size_t start;
-    std::cout << "reading... " << std::endl;
+    std::cout << "Here is the coordinates" << std::endl;
 
     while(!(foundGNGGA)){
         bytesRead = read(fd, temp, 256);
@@ -36,19 +36,6 @@ void Sim::readData(){
     std::cout << std::endl;
 
 }
-
-
-int main(int argc, char const *argv[])
-{   
-    Sim gps("/dev/ttyUSB2");
- 
-    gps.readData();
-
-    return 0;
-}
-
-
-
 
 //wait long enough to get enough raw data from the gps satellite
 
