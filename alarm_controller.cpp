@@ -1,5 +1,6 @@
 #include "alarm_controller.h"
 #include <iostream>
+
 Adxl345 accelerometer("/dev/i2c-1");
 
 LED ledOne(gpioPinTwentySeven);
