@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string>
+#include <vector>
 
 Sim::Sim(const char* device){
     fd = open(device, O_RDWR);
@@ -34,7 +35,9 @@ void Sim::readData(){
             break;
         }
     }
-    std::cout.write(data.data() + start, end - start); 
+    std::string location = data.substr(start, end - start);
+    reformatData(location); 
+
     std::cout << std::endl;
 
 }
@@ -42,6 +45,27 @@ void Sim::readData(){
 void Sim::sendATCommand(const std::string& command){
     std::string cmd = command + "\r\n";
     write(fd, cmd.c_str(), cmd.size());
+}
+
+void Sim::reformatData(const std::string& gpsData){
+    std::vector<size_t> commaPos = {};
+    for (size_t i = 0; i < gpsData.length(); i++){
+        if (gpsData[i] == ','){
+            commaPos.push_back(i);
+        }
+        
+    }
+    
+    
+    
+    std::string latitude = gpsData.substr(commaPos[2], commaPos[3]);
+    std::string latitudeDirection = gpsData.substr(commaPos[)
+    std::string longitude;
+    std::string longitudeDirection;    
+
+    
+
+
 }
 
 //wait long enough to get enough raw data from the gps satellite

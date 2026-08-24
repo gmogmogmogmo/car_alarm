@@ -13,6 +13,7 @@ private:
 public:
     Sim(const char* device);
     void readData();
+    void reformatData(const std::string& gpsData);
     //~Sim();
 };
 
