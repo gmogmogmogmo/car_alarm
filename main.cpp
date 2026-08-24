@@ -2,12 +2,12 @@
 
 int main(int argc, char const *argv[])
 {
-    while (true){
-        systemArmed();
-        trigger();
-        systemOffline();   
-    }
-
+    
+    bool ledMode = ledModeSetup();
+    systemArmed(ledMode);
+    trigger();
+    systemOffline();   
+    
     return 0;
 }
 

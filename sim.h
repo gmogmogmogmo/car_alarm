@@ -9,10 +9,10 @@ class Sim
 {
 private:
     int fd;
+    void sendATCommand(const std::string& command);
 public:
     Sim(const char* device);
     void readData();
-    // void printData(;)
     //~Sim();
 };
 

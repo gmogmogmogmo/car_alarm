@@ -4,20 +4,19 @@
 #include <gpiod.hpp>
 #include <memory>
 
+constexpr int gpioPinNumberSix = 6;
+constexpr int waitTimeForButton = 5;
 class Button
 {
 private:
     int pin; 
-    bool isButtonOn = false;
     std::unique_ptr<gpiod::line_request> request;
     void configure();
 public:
     Button(int pinNumber);
-
-    void hasButtonPressed(); 
+    bool hasButtonPressed(); 
 
     //~Button();
 };
-
 
 #endif

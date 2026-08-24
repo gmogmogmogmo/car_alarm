@@ -6,11 +6,13 @@
 
 Sim::Sim(const char* device){
     fd = open(device, O_RDWR);
-
     if (fd == -1)
     {
         std::cerr << "Failed to open " << device << std::endl;
+        return;
     }
+    sendATCommand("AT+CGNSPWR=1");
+    sendATCommand("AT+CGNSTST=1");
 }
 
 void Sim::readData(){
@@ -35,6 +37,11 @@ void Sim::readData(){
     std::cout.write(data.data() + start, end - start); 
     std::cout << std::endl;
 
+}
+
+void Sim::sendATCommand(const std::string& command){
+    std::string cmd = command + "\r\n";
+    write(fd, cmd.c_str(), cmd.size());
 }
 
 //wait long enough to get enough raw data from the gps satellite

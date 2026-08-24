@@ -2,6 +2,7 @@
 #include <iostream>
 #include "button.h"
 #include <memory>
+#include <chrono>
 
 Button::Button(int pinNumber){
     pin = pinNumber;
@@ -23,14 +24,13 @@ void Button::configure(){
     request = std::make_unique<gpiod::line_request>(chip.prepare_request().set_request_config(request_config).set_line_config(configForGPIO).do_request());
 }
 
-void Button::hasButtonPressed(){
-    if (request->get_value(pin) == gpiod::line::value::ACTIVE){
-        std::cout << "Button pressed!" << std::endl;
-        isButtonOn = true;
-        std::cout << "Status of button: " << isButtonOn << std::endl;
+bool Button::hasButtonPressed(){
+    if (request->wait_edge_events(std::chrono::seconds(waitTimeForButton))){
+        return true;
     }
-    else{
-        std::cout << "Button not pressed." << std::endl;
-    }
+    return false;
 }
 
+
+
+//command to compile: g++ button.cpp button.h  -o button $(pkg-config --cflags --libs libgpiodcxx)

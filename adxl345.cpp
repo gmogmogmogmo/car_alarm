@@ -14,7 +14,6 @@ Adxl345::Adxl345(const char* device){
     fd = open(device, O_RDWR);
     ioctl(fd, I2C_SLAVE, sensorAddress);
     setUpSingleTapDetection();
-    lineSetupSignalDetection();
 }
 
 Adxl345::~Adxl345(){

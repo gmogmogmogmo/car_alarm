@@ -10,22 +10,17 @@
 const int fiveSeconds = 5;
 const int fiveMiliseconds = 500000;
 
-void detectingLights(LED& ledOne, LED& ledTwo, LED& ledThree, Adxl345& accel){
-    while (true)
-    {
-        ledOne.on();
-        usleep(fiveMiliseconds);
-        ledOne.off();
-        ledTwo.on();
-        usleep(fiveMiliseconds);
-        ledTwo.off();
-        ledThree.on();
-        usleep(fiveMiliseconds);
-        ledThree.off();
-        if(accel.tapDetected()){
-            break;
-        }
-    }
+void detectingLights(LED& ledOne, LED& ledTwo, LED& ledThree){
+    ledOne.on();
+    usleep(fiveMiliseconds);
+    ledOne.off();
+    ledTwo.on();
+    usleep(fiveMiliseconds);
+    ledTwo.off();
+    ledThree.on();
+    usleep(fiveMiliseconds);
+    ledThree.off();
+    
 }
 
 void alarmLights(LED& ledOne, LED& ledTwo, LED& ledThree){

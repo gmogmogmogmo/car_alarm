@@ -7,8 +7,8 @@
 #include "pattern.h"
 #include "button.h"
 
-
-void systemArmed();
+bool ledModeSetup();
+void systemArmed(const bool& ledMode);
 void trigger();
 void systemOffline();
 
