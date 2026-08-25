@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+
 Sim::Sim(const char* device){
     fd = open(device, O_RDWR);
     if (fd == -1)
@@ -15,7 +16,31 @@ Sim::Sim(const char* device){
     sendATCommand("AT+CGNSPWR=1");
     sendATCommand("AT+CGNSTST=1");
 }
-
+void Sim::sendATCommand(const std::string& command){
+    std::string cmd = command + "\r\n";
+    write(fd, cmd.c_str(), cmd.size());
+}
+std::string Sim::getField(const std::string& gpsData, const std::vector<size_t>& commaPos, size_t field){
+   
+    return gpsData.substr(commaPos[field] + 1, (commaPos[field + 1] - commaPos[field]) - 1);
+}
+void Sim::reformatData(const std::string& gpsData){
+    std::vector<size_t> commaPos = {};
+    for (size_t i = 0; i < gpsData.length(); i++){
+        if (gpsData[i] == ','){
+            commaPos.push_back(i);
+        }
+    }
+    std::string time = getField(gpsData, commaPos, TIME_FIELD);
+    std::string latitude = getField(gpsData, commaPos, LATITUDE_FIELD);
+    std::string latitudeDirection = getField(gpsData, commaPos, LATITUDE_DIRECTION_FIELD);
+    std::string longitude = getField(gpsData, commaPos, LONGITUDE_FIELD);
+    std::string longitudeDirection = getField(gpsData, commaPos, LONGITUDE_DIRECTION_FIELD);
+    std::cout << "Time: " << time << std::endl; 
+    std::cout << "Latitude: " << latitude << std::endl; 
+    std::cout << "Latitude Direction: " << latitudeDirection << std::endl;
+    std::cout << "Longitude Direction: " << longitudeDirection << std::endl;
+}
 void Sim::readData(){
     bool foundGNGGA = false;
     char temp[256];
@@ -39,36 +64,5 @@ void Sim::readData(){
     reformatData(location); 
 
     std::cout << std::endl;
-
-}
-
-void Sim::sendATCommand(const std::string& command){
-    std::string cmd = command + "\r\n";
-    write(fd, cmd.c_str(), cmd.size());
-}
-
-std::string Sim::getField(const std::string& gpsData, const std::vector<size_t>& commaPos, size_t field){
-   
-    return gpsData.substr(commaPos[field] + 1, (commaPos[field + 1] - commaPos[field]) - 1);
-}
-
-void Sim::reformatData(const std::string& gpsData){
-    std::vector<size_t> commaPos = {};
-    for (size_t i = 0; i < gpsData.length(); i++){
-        if (gpsData[i] == ','){
-            commaPos.push_back(i);
-        }
-    }
-    
-    std::string time = getField(gpsData, commaPos, 0);
-    std::string latitude = getField(gpsData, commaPos, 1);
-    std::string latitudeDirection = getField(gpsData, commaPos, 2);
-    std::string longitude = getField(gpsData, commaPos, 3);
-    std::string longitudeDirection = getField(gpsData, commaPos, 4);
-
-    std::cout << "Time: " << time << std::endl; 
-    std::cout << "Latitude: " << latitude << std::endl; 
-    std::cout << "Latitude Direction: " << latitudeDirection << std::endl;
-    std::cout << "Longitude Direction: " << longitudeDirection << std::endl;
 
 }

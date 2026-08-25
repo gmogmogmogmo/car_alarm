@@ -1,9 +1,11 @@
 #ifndef SIM_H
 #define SIM_H
 
-
-constexpr int timeReading = 2;
-
+constexpr size_t TIME_FIELD = 0;
+constexpr size_t LATITUDE_FIELD = 1;
+constexpr size_t LATITUDE_DIRECTION_FIELD = 2;
+constexpr size_t LONGITUDE_FIELD = 3;
+constexpr size_t LONGITUDE_DIRECTION_FIELD = 4;
 
 class Sim
 {
