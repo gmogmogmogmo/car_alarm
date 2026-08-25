@@ -47,35 +47,28 @@ void Sim::sendATCommand(const std::string& command){
     write(fd, cmd.c_str(), cmd.size());
 }
 
+std::string Sim::getField(const std::string& gpsData, const std::vector<size_t>& commaPos, size_t field){
+   
+    return gpsData.substr(commaPos[field] + 1, (commaPos[field + 1] - commaPos[field]) - 1);
+}
+
 void Sim::reformatData(const std::string& gpsData){
     std::vector<size_t> commaPos = {};
     for (size_t i = 0; i < gpsData.length(); i++){
         if (gpsData[i] == ','){
             commaPos.push_back(i);
         }
-        
     }
     
-    
-    
-    std::string latitude = gpsData.substr(commaPos[2], commaPos[3]);
-    std::string latitudeDirection = gpsData.substr(commaPos[)
-    std::string longitude;
-    std::string longitudeDirection;    
+    std::string time = getField(gpsData, commaPos, 0);
+    std::string latitude = getField(gpsData, commaPos, 1);
+    std::string latitudeDirection = getField(gpsData, commaPos, 2);
+    std::string longitude = getField(gpsData, commaPos, 3);
+    std::string longitudeDirection = getField(gpsData, commaPos, 4);
 
-    
-
+    std::cout << "Time: " << time << std::endl; 
+    std::cout << "Latitude: " << latitude << std::endl; 
+    std::cout << "Latitude Direction: " << latitudeDirection << std::endl;
+    std::cout << "Longitude Direction: " << longitudeDirection << std::endl;
 
 }
-
-//wait long enough to get enough raw data from the gps satellite
-
-// create algorithm that collects one specific sentence that has the postion run program everytime the alarm goes off 
-
-//create a separate function that gives 
-
-
-//buffer.end()
-
-
-// H E L L 0 _ (<- .end() is _)

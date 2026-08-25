@@ -13,6 +13,7 @@ private:
 public:
     Sim(const char* device);
     void readData();
+    std::string getField(const std::string& gpsData, const std::vector<size_t>& commaPos, size_t field);
     void reformatData(const std::string& gpsData);
     //~Sim();
 };
