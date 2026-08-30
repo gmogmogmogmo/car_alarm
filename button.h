@@ -5,6 +5,7 @@
 #include <memory>
 
 constexpr int gpioPinNumberSix = 6;
+//5 seconds
 constexpr int waitTimeForButton = 5;
 class Button
 {
