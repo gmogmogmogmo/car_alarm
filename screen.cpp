@@ -27,7 +27,7 @@ void Screen::print(int startPosX, int startPosY,  const std::string& text){
 }
 
 void Screen::printLogo(uint8_t xpos, uint8_t ypos, uint8_t width, uint8_t height, const uint8_t *bitmap){
-    ssd1306_drawBitmap8(xpos, ypos, width, height, bitmap);
+    ssd1306_drawBitmap(xpos, ypos, width, height, bitmap);
 }
 
 
@@ -37,14 +37,17 @@ int main(int argc, char const *argv[])
     Screen display;
     int startPosX = 0;
     int startPosY = 0;
-    display.print(startPosX, startPosY, "what mode would you like to enter? ");
-    sleep(3);
-    display.print(startPosX, startPosY, "Press the led to continuee");
-    sleep(3);
-    std::cout << " this should be printing " << std::endl;
-    display.printLogo(startPosX, startPosY, 128, 64, beaconLogo);
-    
-    
+    // display.print(startPosX, startPosY, "what mode would you like to enter? ");
+    // sleep(3);
+    // display.print(startPosX, startPosY, "Press the led to continuee");
+    // sleep(3);
+    // std::cout << " this should be printing " << std::endl;
+
+    //print beacon logo 
+    display.printLogo(startPosX, startPosY, oledWdith, oledHeight, beaconLogo);
     
     return 0;
 }
+
+
+//g++ -g screen.cpp -I/home/gmo/libraries/ssd1306/src -L/home/gmo/libraries/ssd1306/build -lssd1306 -o screen
