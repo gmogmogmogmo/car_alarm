@@ -5,20 +5,38 @@
 #include <string>
 #include <vector>
 
-
-Sim::Sim(const char* device){
+Sim::Sim(const char* device, const char* deviceTwo){
     fd = open(device, O_RDWR);
     if (fd == -1)
     {
         std::cerr << "Failed to open " << device << std::endl;
         return;
     }
+    fd_two = open(deviceTwo, O_RDWR);
+
+    initGPS();
+}
+void Sim::initGPS(){
     sendATCommand("AT+CGNSPWR=1");
     sendATCommand("AT+CGNSTST=1");
 }
-void Sim::sendATCommand(const std::string& command){
+void Sim::sendSMS(std::string phoneNumber, std::string message){
+    char ctrlZ = 0x1A;
+    std::string command = "AT+CMGS=\"" + phoneNumber + "\"";
+    sendATCommand("AT+CMGF=1");
+    std::cout << "AT+CMGF=1";
+    sendATCommand(command);
+    std::cout << "command sent: " << command << std::endl;
+
+    usleep(500000);
+    std::cout << "message being sent: " << message << std::endl;
+    write(fd_two, message.c_str(), message.size());
+    write(fd_two, &ctrlZ, 1);
+}
+
+void Sim::sendATCommand(const std::string& command, int fileDec){
     std::string cmd = command + "\r\n";
-    write(fd, cmd.c_str(), cmd.size());
+    write(fileDec, cmd.c_str(), cmd.size());
 }
 std::string Sim::getField(const std::string& gpsData, const std::vector<size_t>& commaPos, size_t field){
    
@@ -65,4 +83,16 @@ void Sim::readData(){
 
     std::cout << std::endl;
 
+}
+
+
+int main(int argc, char const *argv[])
+{
+    Sim messenger("/dev/ttyUSB2", "/dev/ttyUSB3");
+
+
+    messenger.sendSMS("+13104844082", "hello i have send you this message");
+
+
+    return 0;
 }

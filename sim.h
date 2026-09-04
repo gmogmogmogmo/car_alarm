@@ -1,6 +1,9 @@
 #ifndef SIM_H
 #define SIM_H
 
+#include <string>
+#include <vector>
+
 constexpr size_t TIME_FIELD = 0;
 constexpr size_t LATITUDE_FIELD = 1;
 constexpr size_t LATITUDE_DIRECTION_FIELD = 2;
@@ -11,10 +14,15 @@ class Sim
 {
 private:
     int fd;
+    int fd_two;
     void sendATCommand(const std::string& command);
 public:
-    Sim(const char* device);
+    Sim(const char* device, const char* deviceTwo);
+
+    //HELPER FUNCTIONS
+    void initGPS();
     void readData();
+    void sendSMS(std::string phoneNumber, std::string message);
     std::string getField(const std::string& gpsData, const std::vector<size_t>& commaPos, size_t field);
     void reformatData(const std::string& gpsData);
     //~Sim();
@@ -22,25 +30,6 @@ public:
 
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
