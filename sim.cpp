@@ -91,7 +91,7 @@ int main(int argc, char const *argv[])
     sleep(3);
     for (size_t i = 0; i < numOfMessages; i++)
     {
-        messenger.sendSMS("+12064464557", "nigger");
+        messenger.sendSMS("+12064464557", "alarm");
         std::cout << "message sent: " << i << std::endl; 
         sleep(2);
     }
