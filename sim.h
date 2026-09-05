@@ -15,7 +15,7 @@ class Sim
 private:
     int fd;
     int fd_two;
-    void sendATCommand(const std::string& command);
+    void sendATCommand(int fd, const std::string& command);
 public:
     Sim(const char* device, const char* deviceTwo);
 
